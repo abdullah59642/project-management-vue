@@ -14,7 +14,7 @@ watch(() => route.params.id,
     (newVal) => {
         projectId.value = newVal;
         renderAllProjectData();
-    }
+    } 
 );
 
 let toggleComponents = (comp) => {
