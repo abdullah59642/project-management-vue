@@ -90,7 +90,7 @@ onMounted(() => {
             </div>
       </div>
       <div v-else>
-         <p class="text-center"> No data available </p>
+         <p class="text-center"> No todo available </p>
       </div>
          <!-- modal to show the note -->
          <div v-show="addTodoModal"

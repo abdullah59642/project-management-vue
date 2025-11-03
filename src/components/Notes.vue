@@ -39,6 +39,7 @@ const viewNote = (noteId) => {
 const loadCurrentProjectNotes = () => {
     let projectObject = JSON.parse(localStorage.getItem('project' + props.projectId));
     AllNotes.splice(0, AllNotes.length, ...projectObject.notes);
+    console.log(AllNotes);
 }
 
 const updateNote = () => {
@@ -101,14 +102,15 @@ onMounted(() => {
 
       <h2 class="font-bold mb-2" v-show="AllNotes.length > 0"> Notes </h2>
       <div class="flex flex-wrap gap-2 max-h-[77vh] w-[84vw]  overflow-y-auto" v-if="AllNotes.length > 0">
-          <div @click="viewNote(value.noteId)" class="bg-blue-200 w-[21%] h-40 rounded-sm cursor-pointer ms-2 truncate p-2" v-for="(value, index) in AllNotes">
+          <div @click="viewNote(value.noteId)" class="relative bg-blue-200 w-[21%] h-40 rounded-sm cursor-pointer ms-2 truncate p-2" v-for="(value, index) in AllNotes">
               <p class="truncate">{{value.heading}}</p>
               <hr>
               <p class="truncate">{{value.text}}</p>
+              <span class="absolute text-[60%] truncate right-2 bottom-0 text-gray-700">{{value.createdAt}}</span>
           </div>
       </div>
       <div v-else>
-         <p class="text-center"> No data available </p>
+         <p class="text-center"> No notes available </p>
       </div>
       <!-- modal to show the note -->
            <div v-show="viewNoteModal"
