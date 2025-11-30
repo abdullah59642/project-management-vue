@@ -61,7 +61,7 @@ const storeNote = () => {
     noteId: project.notes.length + 1,
     heading: noteData.heading,
     text: noteData.text,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date().toISOString().slice(0, 19).replace("T", " "),
   };
   project.notes.push(newNote);
   localStorage.setItem(key, JSON.stringify(project));
@@ -99,7 +99,6 @@ onMounted(() => {
           </div>
         </div>
 
-
       <h2 class="font-bold mb-2" v-show="AllNotes.length > 0"> Notes </h2>
       <div class="flex flex-wrap gap-2 max-h-[77vh] w-[84vw]  overflow-y-auto" v-if="AllNotes.length > 0">
           <div @click="viewNote(value.noteId)" class="relative bg-blue-200 w-[21%] h-40 rounded-sm cursor-pointer ms-2 truncate p-2" v-for="(value, index) in AllNotes">
@@ -116,10 +115,9 @@ onMounted(() => {
            <div v-show="viewNoteModal"
              class="fixed inset-0 flex justify-center items-center bg-gray bg-opacity-30 backdrop-blur-sm z-50"
              @click.self="viewNoteModal = false">
-              <div class="relative bg-blue-100 p-6 h-[80vh] w-[80vw] bg-blue-100  rounded shadow-lg" @click.stop>
+              <div class="relative p-6 h-[80vh] w-[80vw] bg-blue-100  rounded shadow-lg" @click.stop>
               <h2 class="text-lg font-bold mb-2">Note</h2>
              <button @click="deleteNote()" class="bg-red-600  rounded-sm p-1 hover:bg-red-800 cursor-pointer absolute right-6 top-3"> Delete </button>
-
               <input v-model="viewNoteData.heading" placeholder="Heading..." class="w-full border rounded mb-2 p-1"></input>
               <textarea v-model="viewNoteData.text" placeholder="Text..." class="w-full h-[70%] border rounded mb-2 p-1"></textarea>
               <button @click="updateNote()" class="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer">Update</button>

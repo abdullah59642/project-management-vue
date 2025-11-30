@@ -14,6 +14,7 @@ let activeTab = reactive({
     active: "cursor-pointer bg-blue-500 rounded-xl m-2 px-2",
     notActive: "cursor-pointer",
 });
+let showProjectDeleteModal = ref(false);
 
 watch(() => route.params.id,
     (newVal) => {
@@ -48,11 +49,24 @@ onMounted(() => {
 </script>
 
 <template>
-<h1 class="ms-2 font-bold">{{projectName}}</h1>
+    <div class="flex">
+        <h1 class="ms-2 font-bold">{{projectName}}</h1>
+        <button @click="showProjectDeleteModal = !showProjectDeleteModal" class="ml-auto mr-10 text-xs bg-red-600 rounded-xl p-1 hover:bg-red-900 cursor-pointer">Delete Project</button>
+    </div>
 <div class="flex justify-center">
     <div class="flex gap-8 bg-gray-100 ps-8 rounded-xl w-[60vw]">
         <button @click="toggleComponents('notes')" :class="currentActiveComponent == 'notes' ? activeTab.active : activeTab.notActive">Notes</button>
         <button @click="toggleComponents('todo')" :class="currentActiveComponent == 'todo' ? activeTab.active : activeTab.notActive">Todo List</button>
+    </div>
+</div>
+
+<div v-show="showProjectDeleteModal" @click.self="showProjectDeleteModal = false" class="fixed inset-0 flex justify-center items-center bg-gray bg-opacity-30 backdrop-blur-sm z-50">
+    <div class="relative bg-blue-100 p-6 h-[14vh] w-[25vw] shadow-lg rounded-xl" @click.stop>
+        <h4>Are you sure to delete project "{{ projectName }}"</h4>
+        <div class="flex bg-red-200 justify-center space-x-4">
+            <button>Yes</button>
+            <button>No</button>
+        </div>
     </div>
 </div>
 

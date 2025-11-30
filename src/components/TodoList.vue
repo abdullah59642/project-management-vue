@@ -11,6 +11,7 @@ const props = defineProps({
 let viewTodoData = reactive({
       heading: "",
       text: "",
+      isCompleted: false,
 });
 
 //watch for changes in prop to load notes
@@ -25,8 +26,19 @@ let addTodoNote = reactive({
     todoId: 0,
     heading: "",
     text: "",
+    isCompleted: false,
     createdAt: null,
 });
+
+const updateCompletedStatus = (todoId) => {
+  const todo = allTodoNotes.value.find(t => t.todoId === todoId);
+  todo.isCompleted = !todo.isCompleted;  
+
+  let projectObject = JSON.parse(localStorage.getItem('project' + props.projectId));
+  let Todo = projectObject.todo.find(todo => todo.todoId === todoId);
+  Todo.isCompleted = !Todo.isCompleted;
+  localStorage.setItem('project' + props.projectId, JSON.stringify(projectObject));
+}
 
 const addTodo = () => {
     let projectObject = JSON.parse(localStorage.getItem('project' + props.projectId));
@@ -34,7 +46,8 @@ const addTodo = () => {
         todoId: projectObject.todo.length + 1,
         heading: addTodoNote.heading,
         text: addTodoNote.text,
-        createdAt: new Date().toISOString(),
+        isCompleted: false,
+        createdAt: new Date().toISOString().slice(0, 19).replace("T", " "),
     };
     projectObject.todo.push(newTodo);
     //set the project object back again
@@ -56,6 +69,7 @@ const viewNote = (todoId) => {
      let Todo = projectObject.todo.find(todo => todo.todoId === todoId);
      viewTodoData.heading = Todo.heading;
      viewTodoData.text = Todo.text;
+     viewTodoData.isCompleted = Todo.isCompleted;
      viewTodoModal.value = true;
 }
 
@@ -81,8 +95,11 @@ onMounted(() => {
     </div>
     <h2 class="text-lg font-bold mb-2" v-show="allTodoNotes.length > 0">Todo List</h2>
     <!-- div to render todo list -->
-        <div class=" flex flex-col items-center gap-2 max-h-[77vh] w-[84vw] overflow-y-auto" v-if="allTodoNotes.length > 0">
-          <div @click="viewNote(value.todoId)" class="relative bg-blue-200 w-[25%] h-20 rounded-xl cursor-pointer ms-2 truncate p-2" v-for="(value, index) in allTodoNotes">
+        <div class="flex flex-col items-center gap-2 max-h-[77vh] w-[84vw] overflow-y-auto" v-if="allTodoNotes.length > 0">
+          <div @click="viewNote(value.todoId)" class="relative w-[25%] h-20 rounded-xl cursor-pointer ms-2 truncate p-2"
+           :class="value.isCompleted ? 'bg-gray-400 opacity-70' : 'bg-blue-200'" v-for="(value, index) in allTodoNotes">
+          <span @click.stop="updateCompletedStatus(value.todoId)" class="absolute top-2 right-2 w-4 h-4 rounded-full border-2 border-gray-600"
+          title="Mark as completed"></span>
               <p class="truncate">{{value.heading}}</p>
               <hr>
               <p class="truncate">{{value.text}}</p>
@@ -103,16 +120,16 @@ onMounted(() => {
               <button @click="addTodo()" class="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer">Create</button>
           </div>
         </div>
-
           <!-- modal to show the note -->
           <div v-show="viewTodoModal"
              class="fixed inset-0 flex justify-center items-center bg-gray bg-opacity-30 backdrop-blur-sm z-50"
              @click.self="viewTodoModal = false">
-              <div class="relative bg-blue-100 p-6 h-[40vh] w-[50vw] rounded shadow-lg" @click.stop>
+              <div class="relative p-6 h-[40vh] w-[50vw] rounded shadow-lg"
+              :class="viewTodoData.isCompleted ? 'bg-gray-400 opacity-70' : 'bg-blue-100'" @click.stop>
               <h2 class="text-lg font-bold mb-2">Todo</h2>
               <input v-model="viewTodoData.heading" placeholder="Heading..." class="w-full border rounded mb-2 p-1"></input>
               <textarea v-model="viewTodoData.text" placeholder="Text..." class="w-full h-[70%] border rounded mb-2 p-1"></textarea>
-              <button @click="updateNote()" class="bg-blue-600 text-white px-4  py-1 rounded cursor-pointer">Update</button>
+              <button @click="updateNote()" class="bg-blue-600 text-white px-4 rounded cursor-pointer">Update</button>
           </div>
         </div>
 </template>
