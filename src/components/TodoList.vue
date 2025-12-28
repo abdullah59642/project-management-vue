@@ -1,12 +1,26 @@
 <script setup>
-import { onMounted, ref, reactive, watch } from 'vue'
+import { onMounted, ref, reactive, watch, computed } from 'vue'
 
 let allTodoNotes = ref([]);
 let editTodoId = ref();
 let viewTodoModal = ref(false);
+let status = ref('');
+const baseBtnClass = 'rounded cursor-pointer p-1'; 
+const activeBtnClass = "bg-blue-500 hover:bg-blue-500";
+const inActiveBtnClass = "bg-blue-300 hover:bg-blue-500";
 const props = defineProps({
   projectId: String
 });
+
+const completedBtnClass = computed(() => [
+  baseBtnClass,
+  status.value == 'completed' ? activeBtnClass : inActiveBtnClass,
+]);
+
+const inCompletedBtnClass = computed(() => [
+  baseBtnClass, 
+  status.value == 'not-completed' ? activeBtnClass : inActiveBtnClass,
+]);
 
 let viewTodoData = reactive({
       heading: "",
@@ -16,10 +30,11 @@ let viewTodoData = reactive({
 
 //watch for changes in prop to load notes
 watch(
-    () => props.projectId,
+    [status, () => props.projectId],
     () => {
-        renderTodo();
+        renderTodo(status.value);
 });
+
 
 let addTodoModal = ref(false);
 let addTodoNote = reactive({
@@ -53,13 +68,24 @@ const addTodo = () => {
     //set the project object back again
     localStorage.setItem('project' + props.projectId, JSON.stringify(projectObject));
     addTodoModal.value = false;
+    //reset status
+    status.value = "";
     renderTodo();
 }
 
-const renderTodo = () => {
+const renderTodo = (status) => {
     let projectObject = JSON.parse(localStorage.getItem('project' + props.projectId));
-    allTodoNotes.value.splice(0, allTodoNotes.value.length, ...projectObject.todo);
-    console.log(allTodoNotes);
+    if(status == 'completed'){
+      allTodoNotes.value.splice(0, allTodoNotes.value.length, ...projectObject.todo.filter((o) => {
+        return o.isCompleted == true;
+      }))
+    } else if(status == 'not-completed'){
+      allTodoNotes.value.splice(0, allTodoNotes.value.length, ...projectObject.todo.filter((o) => {
+        return o.isCompleted == false;
+      }));
+    } else {
+      allTodoNotes.value.splice(0, allTodoNotes.value.length, ...projectObject.todo);
+    }
 }
 
 const viewNote = (todoId) => {
@@ -85,13 +111,17 @@ const updateNote = () => {
 }
 
 onMounted(() => {
-    renderTodo();
+    renderTodo(status.value);
 });
 </script>
 
 <template>
      <div class="flex justify-end me-6">
-     <button @click="addTodoModal = !addTodoModal" class="p-1 bg-blue-500 text-white rounded cursor-pointer">+</button>
+      <div class="flex text-xs gap-x-2">
+        <button @click="status = status == 'completed' ? '' : 'completed'" :class="completedBtnClass">Completed</button>
+        <button @click="status = status == 'not-completed' ? '' : 'not-completed'" :class="inCompletedBtnClass">Incomplete</button>
+      </div>
+      <button @click="addTodoModal = !addTodoModal" class="ms-2 p-1 bg-blue-500 text-white rounded cursor-pointer">+</button>
     </div>
     <h2 class="text-lg font-bold mb-2" v-show="allTodoNotes.length > 0">Todo List</h2>
     <!-- div to render todo list -->

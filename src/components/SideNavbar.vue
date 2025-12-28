@@ -27,7 +27,16 @@ let createProject = () => {
 let renderAllProjects = () => {
     //first empty the projects
     userProjects.value = [];
-    let i = 1;
+    let allProjectNumbers = [];
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("project")) {
+        let num = parseInt(key.replace("project", ""));
+        allProjectNumbers.push(num);
+      }
+    });
+
+    if(allProjectNumbers.length > 0) {
+    let i = Math.min(...allProjectNumbers);
     while(localStorage.getItem('project' + i) !== null){
       let data = localStorage.getItem('project' + i);
       let project = JSON.parse(data);
@@ -37,6 +46,7 @@ let renderAllProjects = () => {
           projectKey: i,
         });
       i++;
+    }
   }
 }
 
@@ -92,8 +102,13 @@ onMounted(() => {
     </div>
     <h3 class="p-3 font-bold truncate">My Projects</h3>
     <!-- project list -->
+    <div v-if="userProjects.length > 0">
     <div v-for="(value, index) in userProjects" class="flex flex-col mt-0 gap-2 cursor-pointer">
       <RouterLink :to="`/project/${value.projectKey}`" class="p-2 hover:bg-blue-400 ps-4 truncate">{{ value.name }}</RouterLink>
+    </div>
+    </div>
+    <div v-else>
+      <h2 class="text-xs text-center">No projects found</h2>
     </div>
   </div>
 </template>

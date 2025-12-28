@@ -23,6 +23,11 @@ watch(() => route.params.id,
     }
 );
 
+
+function deleteProject(){
+    localStorage.removeItem('project' + projectId.value);    
+}
+
 let toggleComponents = (comp) => {
     showNotesComp.value = false;
     showTodoListComp.value = false;
@@ -61,11 +66,11 @@ onMounted(() => {
 </div>
 
 <div v-show="showProjectDeleteModal" @click.self="showProjectDeleteModal = false" class="fixed inset-0 flex justify-center items-center bg-gray bg-opacity-30 backdrop-blur-sm z-50">
-    <div class="relative bg-blue-100 p-6 h-[14vh] w-[25vw] shadow-lg rounded-xl" @click.stop>
+    <div class="relative bg-blue-100 p-6 w-[25vw] shadow-lg rounded-xl" @click.stop>
         <h4>Are you sure to delete project "{{ projectName }}"</h4>
-        <div class="flex bg-red-200 justify-center space-x-4">
-            <button>Yes</button>
-            <button>No</button>
+        <div class="flex justify-center space-x-2 mt-2">
+            <button @click="deleteProject()" class="bg-red-500 rounded-sm px-1 hover:bg-red-800 cursor-pointer">Yes</button>
+            <button @click="showProjectDeleteModal = false" class="bg-gray-500 rounded-sm px-1 hover:bg-gray-600 cursor-pointer">No</button>
         </div>
     </div>
 </div>
