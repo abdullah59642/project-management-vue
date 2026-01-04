@@ -35,7 +35,6 @@ watch(
         renderTodo(status.value);
 });
 
-
 let addTodoModal = ref(false);
 let addTodoNote = reactive({
     todoId: 0,

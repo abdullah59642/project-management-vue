@@ -1,14 +1,17 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import {useProjectStore} from '@/stores/projectStore'
 import { toast } from 'vue3-toastify'
 import { RouterLink } from 'vue-router'
 
 let projectStore = useProjectStore();
 let showProjectModal = ref(false);
-let userProjects = ref([]);
 let projectName = ref('');
 let projectDesc = ref('');
+let selectedProjectClass = 'bg-blue-600 ';
+let notSelectedProjectClass = 'bg-blue-400 hover:bg-blue-600 ';
+let baseProjectClass = 'p-1 mt-1 ps-4 truncate';
+let selectedProjectKey = ref();
 
 let createProject = () => {
   if(projectName.value.trim() == "" || projectDesc.value.trim() == ""){
@@ -20,38 +23,13 @@ let createProject = () => {
     projectName.value = '';
     projectDesc.value = '';
     //re-render projects
-    renderAllProjects();
+    projectStore.renderAllProjects();
   }
-}
-
-let renderAllProjects = () => {
-    //first empty the projects
-    userProjects.value = [];
-    let allProjectNumbers = [];
-    Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith("project")) {
-        let num = parseInt(key.replace("project", ""));
-        allProjectNumbers.push(num);
-      }
-    });
-
-    if(allProjectNumbers.length > 0) {
-    let i = Math.min(...allProjectNumbers);
-    while(localStorage.getItem('project' + i) !== null){
-      let data = localStorage.getItem('project' + i);
-      let project = JSON.parse(data);
-      userProjects.value.push(
-        {
-          name: project.name,
-          projectKey: i,
-        });
-      i++;
-    }
-  }
+  console.log(selectedProjectKey.value);
 }
 
 onMounted(() => {
-  renderAllProjects();
+  projectStore.renderAllProjects();
 });
 </script>
 
@@ -102,9 +80,14 @@ onMounted(() => {
     </div>
     <h3 class="p-3 font-bold truncate">My Projects</h3>
     <!-- project list -->
-    <div v-if="userProjects.length > 0">
-    <div v-for="(value, index) in userProjects" class="flex flex-col mt-0 gap-2 cursor-pointer">
-      <RouterLink :to="`/project/${value.projectKey}`" class="p-2 hover:bg-blue-400 ps-4 truncate">{{ value.name }}</RouterLink>
+    <div v-if="projectStore.userProjects.length > 0">
+    <div v-for="(value, index) in projectStore.userProjects" class="flex flex-col mt-0 gap-1 cursor-pointer">
+      <RouterLink :to="`/project/${value.projectKey}`" @click="selectedProjectKey = value.projectKey" 
+      :class="[
+        baseProjectClass,
+        value.projectKey == selectedProjectKey ? selectedProjectClass : notSelectedProjectClass,
+      ]">
+      {{ value.name }}</RouterLink>
     </div>
     </div>
     <div v-else>

@@ -1,10 +1,12 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import Notes from '../components/Notes.vue'
 import TodoList from '../components/TodoList.vue'
+import { useRoute } from 'vue-router'
+import {useProjectStore} from '@/stores/projectStore'
 
 const route = useRoute()
+let projectStore = useProjectStore();
 let projectId = ref(route.params.id);
 let projectName = ref('');
 let showNotesComp = ref(true);
@@ -22,11 +24,6 @@ watch(() => route.params.id,
         renderAllProjectData();
     }
 );
-
-
-function deleteProject(){
-    localStorage.removeItem('project' + projectId.value);    
-}
 
 let toggleComponents = (comp) => {
     showNotesComp.value = false;
@@ -69,7 +66,7 @@ onMounted(() => {
     <div class="relative bg-blue-100 p-6 w-[25vw] shadow-lg rounded-xl" @click.stop>
         <h4>Are you sure to delete project "{{ projectName }}"</h4>
         <div class="flex justify-center space-x-2 mt-2">
-            <button @click="deleteProject()" class="bg-red-500 rounded-sm px-1 hover:bg-red-800 cursor-pointer">Yes</button>
+            <button @click="projectStore.deleteProject(projectId)" class="bg-red-500 rounded-sm px-1 hover:bg-red-800 cursor-pointer">Yes</button>
             <button @click="showProjectDeleteModal = false" class="bg-gray-500 rounded-sm px-1 hover:bg-gray-600 cursor-pointer">No</button>
         </div>
     </div>
