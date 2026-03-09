@@ -24,11 +24,11 @@ onMounted(() => {
 
 <template>
 <div class="flex items-center flex-col">
-    <div class="w-[40%] pt-8">
-        <h1 class="text-3xl mb-2">Profile</h1>
+    <div class="w-[70%] pt-8">
+        <h1 class="text-xl md:text-xl mb-2">Profile</h1>
         <div class="flex flex-col">
-                <p class="text-sm">Change your Username:</p>
-                <input v-model="cUserName" type="password" :placeholder="userName" class="border border-gray-400 p-1 rounded w-[50%] mb-1"/>
+                <p class="text-xs md:text-sm ">Change your Username:</p>
+                <input v-model="cUserName" type="password" :placeholder="userName" class="border border-gray-400 p-1 rounded md:w-[36%] w-[50%] lg:w-[30%] mb-1"/>
                 <button @click="changeUserName()" class="hover:bg-blue-600 cursor-pointer rounded bg-blue-400 text-white w-17">Change</button>
         </div>
     </div>

@@ -1,10 +1,10 @@
 import {defineStore} from 'pinia'
 import {ref} from 'vue'
 import { useRouter } from 'vue-router'
-import { toast } from 'vue3-toastify'
 
 export const useProjectStore = defineStore("projectStore", () => {
     let userProjects = ref([]);
+    let selectedProjectKey = ref();
     const router = useRouter();
     const addProject = (...data) => {
         let i = 0;
@@ -17,6 +17,7 @@ export const useProjectStore = defineStore("projectStore", () => {
             description: data[1],
             notes: [],
             todo: [],
+            dateCreated: new Date().toISOString().split('T')[0],
         };
         localStorage.setItem(key, JSON.stringify(project));
         return true;
@@ -51,5 +52,5 @@ export const useProjectStore = defineStore("projectStore", () => {
       }
     }
 
-    return {addProject, renderAllProjects, userProjects, deleteProject};
+    return {addProject, renderAllProjects, userProjects, deleteProject, selectedProjectKey};
 });

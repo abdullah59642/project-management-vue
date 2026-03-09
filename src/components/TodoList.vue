@@ -1,10 +1,22 @@
 <script setup>
 import { onMounted, ref, reactive, watch, computed } from 'vue'
-
+const currentPage = ref(1)
+const pageSize = ref(7)
 let allTodoNotes = ref([]);
 let editTodoId = ref();
 let viewTodoModal = ref(false);
 let status = ref('');
+
+const totalPages = computed(() => {
+  return Math.ceil(allTodoNotes.value.length / pageSize.value)
+})
+
+const paginatedTodos = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return allTodoNotes.value.slice(start, end)
+})
+
 const baseBtnClass = 'rounded cursor-pointer p-1'; 
 const activeBtnClass = "bg-blue-500 hover:bg-blue-500";
 const inActiveBtnClass = "bg-blue-300 hover:bg-blue-500";
@@ -55,13 +67,14 @@ const updateCompletedStatus = (todoId) => {
 }
 
 const addTodo = () => {
+    const now = new Date();
     let projectObject = JSON.parse(localStorage.getItem('project' + props.projectId));
     let newTodo = {
         todoId: projectObject.todo.length + 1,
         heading: addTodoNote.heading,
         text: addTodoNote.text,
         isCompleted: false,
-        createdAt: new Date().toISOString().slice(0, 19).replace("T", " "),
+        createdAt: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`,
     };
     projectObject.todo.push(newTodo);
     //set the project object back again
@@ -69,6 +82,9 @@ const addTodo = () => {
     addTodoModal.value = false;
     //reset status
     status.value = "";
+    //reset values after closing the modal
+    addTodoNote.heading = '';
+    addTodoNote.text = '';
     renderTodo();
 }
 
@@ -124,20 +140,44 @@ onMounted(() => {
     </div>
     <h2 class="text-lg font-bold mb-2" v-show="allTodoNotes.length > 0">Todo List</h2>
     <!-- div to render todo list -->
-        <div class="flex flex-col items-center gap-2 max-h-[77vh] w-[84vw] overflow-y-auto" v-if="allTodoNotes.length > 0">
+        <div class="flex flex-col items-center gap-2 h-[70vh] w-[84vw] overflow-y-auto" v-if="allTodoNotes.length > 0">
           <div @click="viewNote(value.todoId)" class="relative w-[25%] h-20 rounded-xl cursor-pointer ms-2 truncate p-2"
-           :class="value.isCompleted ? 'bg-gray-400 opacity-70' : 'bg-blue-200'" v-for="(value, index) in allTodoNotes">
-          <span @click.stop="updateCompletedStatus(value.todoId)" class="absolute top-2 right-2 w-4 h-4 rounded-full border-2 border-gray-600"
+           :class="value.isCompleted ? 'bg-gray-400 opacity-70' : 'bg-blue-200'" v-for="(value, index) in paginatedTodos">
+          <span @click.stop="updateCompletedStatus(value.todoId)" class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full border-2 border-gray-600"
           title="Mark as completed"></span>
               <p class="truncate">{{value.heading}}</p>
               <hr>
               <p class="truncate">{{value.text}}</p>
-              <span class="absolute text-[60%] truncate right-2 bottom-0 text-gray-700">{{value.createdAt}}</span>
+              <span class="absolute text-[60%] truncate right-2 bottom-0 text-gray-700">{{value.createdAt.split(' ')[0]}}</span>
             </div>
+  
       </div>
       <div v-else>
          <p class="text-center"> No todo available </p>
       </div>
+            <!-- pagination starts -->
+      <div v-if="allTodoNotes.length > 0" class="flex justify-center h-10 w-[84vw]">
+            <div
+              v-if="totalPages > 1"
+              class="flex justify-center items-center gap-2">
+              <button
+                @click="currentPage--"
+                :disabled="currentPage === 1"
+                class="px-2 bg-blue-400 rounded disabled:opacity-50 hover:bg-blue-600 cursor-pointer">
+                Prev
+              </button>
+              <span class="text-sm">
+                Page {{ currentPage }} of {{ totalPages }}
+              </span>
+              <button
+                @click="currentPage++"
+                :disabled="currentPage === totalPages"
+                class="px-2 bg-blue-400 rounded disabled:opacity-50 hover:bg-blue-600 cursor-pointer">
+                Next
+              </button>
+            </div>
+        </div>
+      <!-- pagination ends -->
          <!-- modal to show the note -->
          <div v-show="addTodoModal"
              class="fixed inset-0 flex justify-center items-center bg-gray bg-opacity-30 backdrop-blur-sm z-50"

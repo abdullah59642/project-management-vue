@@ -1,5 +1,6 @@
 <template>
-<pre class="p-2 whitespace-pre-line font-sans text-base leading-relaxed ms-8">
+<pre class="p-1 whitespace-pre-line font-sans leading-relaxed ms-1 text-xs
+ sm:text-sm">
  <h1 class="text-xl font-bold">About</h1>
   Welcome to [Your App Name], a powerful and intuitive project management platform designed to help teams plan, organize, and deliver projects efficiently.
   Whether you're managing a small personal project or coordinating large teams across departments, [Your App Name] provides all the tools you need to stay productive and aligned.

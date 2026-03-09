@@ -1,5 +1,20 @@
 <script setup>
-import { onMounted, ref, reactive, watch } from 'vue'
+import { onMounted, computed, ref, reactive, watch } from 'vue';
+const currentPage = ref(1);
+const pageSize = ref(16);
+const paginatedNotes = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return sortedNotes.value.slice(start, end)
+});
+const totalPages = computed(() => {
+  return Math.ceil(sortedNotes.value.length / pageSize.value)
+});
+const sortedNotes = computed(() => {
+  return [...AllNotes].sort((a, b) => {
+    return new Date(b.createdAt) - new Date(a.createdAt)
+  });
+});
 
 let AllNotes = reactive([]);
 let showAddNotesModal = ref(false);
@@ -16,7 +31,7 @@ let viewNoteData = reactive({
 });
 
 const props = defineProps({
-  projectId: String
+  projectId: String,
 });
 
 //watch for changes in prop to load notes
@@ -39,7 +54,7 @@ const viewNote = (noteId) => {
 const loadCurrentProjectNotes = () => {
     let projectObject = JSON.parse(localStorage.getItem('project' + props.projectId));
     AllNotes.splice(0, AllNotes.length, ...projectObject.notes);
-    console.log(AllNotes);
+    currentPage.value = 1;
 }
 
 const updateNote = () => {
@@ -57,11 +72,12 @@ const storeNote = () => {
   let key = 'project' + props.projectId;
   let projectString = localStorage.getItem(key);
   let project = JSON.parse(projectString);
+  const now = new Date();
   let newNote = {
     noteId: project.notes.length + 1,
     heading: noteData.heading,
     text: noteData.text,
-    createdAt: new Date().toISOString().slice(0, 19).replace("T", " "),
+    createdAt: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`,
   };
   project.notes.push(newNote);
   localStorage.setItem(key, JSON.stringify(project));
@@ -75,8 +91,8 @@ const deleteNote = () => {
     let projectObject = JSON.parse(localStorage.getItem('project' + props.projectId));
     projectObject.notes = projectObject.notes.filter(note => note.noteId !== editNoteId.value);
     localStorage.setItem('project' + props.projectId, JSON.stringify(projectObject));
-      viewNoteModal.value = false;
-      loadCurrentProjectNotes();
+    viewNoteModal.value = false;
+    loadCurrentProjectNotes();
 }
 
 onMounted(() => {
@@ -100,16 +116,43 @@ onMounted(() => {
         </div>
 
       <h2 class="font-bold mb-2" v-show="AllNotes.length > 0"> Notes </h2>
-      <div class="flex flex-wrap gap-2 max-h-[77vh] w-[84vw]  overflow-y-auto" v-if="AllNotes.length > 0">
-          <div @click="viewNote(value.noteId)" class="relative bg-blue-200 w-[21%] h-40 rounded-sm cursor-pointer ms-2 truncate p-2" v-for="(value, index) in AllNotes">
-              <p class="truncate">{{value.heading}}</p>
-              <hr>
-              <p class="truncate">{{value.text}}</p>
-              <span class="absolute text-[60%] truncate right-2 bottom-0 text-gray-700">{{value.createdAt}}</span>
+        <div class="flex flex-wrap gap-2  h-[75vh] w-[84vw] overflow-y-auto min-h-0 z-0" v-if="AllNotes.length > 0">
+          <!-- <div class=" bg-green-400 h-[75vh] w-full">  -->
+            <div
+                v-for="value in paginatedNotes"
+                :key="value.noteId"
+                @click="viewNote(value.noteId)"
+                class="relative bg-blue-200 w-[21%] h-40 rounded-sm cursor-pointer ms-2 truncate p-2 z-0">
+                <p class="truncate">{{value.heading}}</p>
+                <hr>
+                <p class="truncate">{{value.text}}</p>
+                <span class="absolute text-[60%] truncate right-2 bottom-0 text-gray-700">{{value.createdAt.split(" ")[0]}}</span>
+            <!-- </div> -->
           </div>
       </div>
       <div v-else>
          <p class="text-center"> No notes available </p>
+      </div>
+      <div class="flex justify-center h-10 w-[84vw]">
+        <div
+              v-if="totalPages > 1"
+              class="flex justify-center items-center gap-2">
+              <button
+                @click="currentPage--"
+                :disabled="currentPage === 1"
+                class="px-2 bg-blue-400 rounded disabled:opacity-50 hover:bg-blue-600 cursor-pointer">
+                Prev
+              </button>
+              <span class="text-sm">
+                Page {{ currentPage }} of {{ totalPages }}
+              </span>
+              <button
+                @click="currentPage++"
+                :disabled="currentPage === totalPages"
+                class="px-2 bg-blue-400 rounded disabled:opacity-50 hover:bg-blue-600 cursor-pointer">
+                Next
+              </button>
+            </div>
       </div>
       <!-- modal to show the note -->
            <div v-show="viewNoteModal"
