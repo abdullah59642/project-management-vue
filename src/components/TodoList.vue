@@ -132,28 +132,32 @@ onMounted(() => {
 
 <template>
      <div class="flex justify-end me-6">
-      <div class="flex text-xs gap-x-2">
+      <div class="flex text-xs gap-x-2 mt-3">
         <button @click="status = status == 'completed' ? '' : 'completed'" :class="completedBtnClass">Completed</button>
         <button @click="status = status == 'not-completed' ? '' : 'not-completed'" :class="inCompletedBtnClass">Incomplete</button>
-      </div>
-      <button @click="addTodoModal = !addTodoModal" class="ms-2 p-1 bg-blue-500 text-white rounded cursor-pointer">+</button>
+        <button 
+        @click="addTodoModal = !addTodoModal"
+        class="ms-1 h-[2.4vh] w-[3vh] flex items-center justify-center p-0 bg-blue-500 text-white rounded cursor-pointer">
+        +
+      </button>
+    </div>
+
     </div>
     <h2 class="text-lg font-bold mb-2" v-show="allTodoNotes.length > 0">Todo List</h2>
-    <!-- div to render todo list -->
+        <!-- div to render todo list -->
         <div class="flex flex-col items-center gap-2 h-[70vh] w-[84vw] overflow-y-auto" v-if="allTodoNotes.length > 0">
-          <div @click="viewNote(value.todoId)" class="relative w-[25%] h-20 rounded-xl cursor-pointer ms-2 truncate p-2"
+          <div @click="viewNote(value.todoId)" class="relative w-[70%] sm:w-[60%] lg:w-[49%] xl:w-[40%] h-18 sm:h-20 rounded-xl cursor-pointer ms-2 truncate p-2"
            :class="value.isCompleted ? 'bg-gray-400 opacity-70' : 'bg-blue-200'" v-for="(value, index) in paginatedTodos">
-          <span @click.stop="updateCompletedStatus(value.todoId)" class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full border-2 border-gray-600"
-          title="Mark as completed"></span>
-              <p class="truncate">{{value.heading}}</p>
+           <span @click.stop="updateCompletedStatus(value.todoId)" class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full border-2 border-gray-600" title="Mark as completed"></span>
+           <p class="truncate">{{ value.heading ? value.heading : '-' }}</p>
               <hr>
               <p class="truncate">{{value.text}}</p>
               <span class="absolute text-[60%] truncate right-2 bottom-0 text-gray-700">{{value.createdAt.split(' ')[0]}}</span>
             </div>
-  
-      </div>
+        </div>
+
       <div v-else>
-         <p class="text-center"> No todo available </p>
+         <p class="text-center mt-5"> No todo available </p>
       </div>
             <!-- pagination starts -->
       <div v-if="allTodoNotes.length > 0" class="flex justify-center h-10 w-[84vw]">
@@ -180,12 +184,15 @@ onMounted(() => {
       <!-- pagination ends -->
          <!-- modal to show the note -->
          <div v-show="addTodoModal"
-             class="fixed inset-0 flex justify-center items-center bg-gray bg-opacity-30 backdrop-blur-sm z-50"
+             class="fixed inset-0 flex justify-center items-center h-full bg-gray bg-opacity-30 backdrop-blur-sm z-50"
              @click.self="addTodoModal = false">
-              <div class="relative bg-blue-100 p-6 h-[24vh] w-[40vw] rounded shadow-lg" @click.stop>
+          <div class="relative bg-blue-100 p-6 h-[30vh] w-[80vw] rounded shadow-lg
+            sm:relative sm:bg-blue-100 sm:p-6 sm:h-[36vh] sm:w-[65vw] sm:rounded sm:shadow-lg
+            lg:w-[60vw]
+            xl:w-[50vw]" @click.stop>
               <h2 class="text-lg font-bold mb-2">Todo</h2>
-              <input v-model="addTodoNote.heading" placeholder="Heading..." class="w-full border rounded mb-2 p-1"></input>
-              <textarea v-model="addTodoNote.text" placeholder="Text..." class="w-full h-[30%] border rounded mb-2 p-1"></textarea>
+              <input v-model="addTodoNote.heading" placeholder="Heading..." class="w-full border rounded mb-2 p-1 outline-black"></input>
+              <textarea v-model="addTodoNote.text" placeholder="Text..." class="w-full h-[35%] border rounded mb-2 p-1 outline-black"></textarea>
               <button @click="addTodo()" class="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer">Create</button>
           </div>
         </div>
@@ -193,12 +200,12 @@ onMounted(() => {
           <div v-show="viewTodoModal"
              class="fixed inset-0 flex justify-center items-center bg-gray bg-opacity-30 backdrop-blur-sm z-50"
              @click.self="viewTodoModal = false">
-              <div class="relative p-6 h-[40vh] w-[50vw] rounded shadow-lg"
+              <div class="relative pb-10 p-6 h-[40vh] w-[80vw] sm:w-[50vw] rounded shadow-lg"
               :class="viewTodoData.isCompleted ? 'bg-gray-400 opacity-70' : 'bg-blue-100'" @click.stop>
               <h2 class="text-lg font-bold mb-2">Todo</h2>
               <input v-model="viewTodoData.heading" placeholder="Heading..." class="w-full border rounded mb-2 p-1"></input>
               <textarea v-model="viewTodoData.text" placeholder="Text..." class="w-full h-[70%] border rounded mb-2 p-1"></textarea>
-              <button @click="updateNote()" class="bg-blue-600 text-white px-4 rounded cursor-pointer">Update</button>
+              <button @click="updateNote()" class="bg-blue-600 text-white px-3 rounded cursor-pointer">Update</button>
           </div>
         </div>
 </template>

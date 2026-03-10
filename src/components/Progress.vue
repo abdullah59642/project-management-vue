@@ -208,11 +208,11 @@ onMounted(() => {
 
 <template>
 <h2 class="text-md font-bold mb-2" >Project Progress</h2>
-<div class="flex flex-wrap justify-between p-4 h-[calc(100vh-180px)]">
-  <div class="rounded-xl bg-gray-300 h-[50%] w-[25%] overflow-y-auto">
-    <h3 class="text-center truncate mt-2">Notes Progress</h3>
+<div class="flex items-center sm:items-start sm:flex-row space-y-3 flex-col sm:justify-between sm:p-4  sm:h-[calc(100vh-180px)]">
+  <div class="rounded-xl bg-gray-300 min-h-[20vh] sm:h-[50%] w-[73%] sm:w-[25%] overflow-y-auto pb-3">
+    <h3 class="text-center text-sm sm:text-sm truncate mt-2">Notes Progress</h3>
     <div v-if="notes.length > 0">
-      <div class="flex flex-col ms-4 text-sm mt-4">
+      <div class="flex flex-col ms-4 text-xs sm:text-sm mt-4">
        <span class="truncate">Total notes: {{notesData.totalNotes}}</span>
        <span class="truncate">Created today: {{notesData.createdToday}}</span>
        <span class="truncate">Created this week: {{notesData.createdThisWeek}} </span>
@@ -222,13 +222,13 @@ onMounted(() => {
     </div>
     <div v-else>
       <div class="flex justify-center mt-10">
-     <span class="text-xs truncate text-center">No notes found </span>
-     </div>
+      <span class="text-xs truncate text-center">No notes found </span>
+      </div>
     </div>
   </div>
 
-  <div class="rounded-xl bg-gray-300 h-[50%] w-[25%] overflow-y-auto">
-    <h3 class="text-center truncate mt-2">Todo Progress</h3>
+  <div class="rounded-xl bg-gray-300 min-h-[20vh] sm:h-[50%] w-[73%] sm:w-[25%] overflow-y-auto pb-3">
+    <h3 class="text-center text-sm sm:text-sm truncate mt-2">Todo Progress</h3>
     <div v-if="todo.length > 0">
     <!-- rating -->
     <div class="flex items-center justify-center space-x-1 cursor-pointer">
@@ -242,28 +242,28 @@ onMounted(() => {
         >
       <path d="M12 2.25l2.94 6.1 6.73.98-4.87 4.74 1.15 6.7L12 17.9l-6.02 3.17 1.15-6.7-4.87-4.74 6.73-.98L12 2.25z"/>
     </svg>
+  </div>
+      <!-- end rating -->
+      <div class="flex flex-col ms-4 text-xs sm:text-sm mt-4">
+          <span class="truncate">Total Todos: {{todosData.totaltodos}}</span>
+          <span class="truncate">Pending Todos: {{todosData.pendingTodos}} </span>
+          <span class="truncate">Completed todos: {{todosData.completedTodos}}</span>
+          <span class="truncate">Uncompleted Todos: {{todosData.unCompletedTodos}} </span>
+          <span class="truncate">Created today: {{todosData.createdToday}} </span>
+          <span class="truncate">Created this week: {{todosData.createdThisWeek}} </span>
+          <span class="truncate">Created this month: {{todosData.createdThisMonth}} </span>
+          <span class="truncate">Last todo created: {{todosData.lastTodoTime}} </span>
+        </div>
       </div>
-    <!-- end rating -->
-      <div class="flex flex-col ms-4 text-sm mt-4">
-       <span class="truncate">Total Todos: {{todosData.totaltodos}}</span>
-       <span class="truncate">Pending Todos: {{todosData.pendingTodos}} </span>
-       <span class="truncate">Completed todos: {{todosData.completedTodos}}</span>
-       <span class="truncate">Uncompleted Todos: {{todosData.unCompletedTodos}} </span>
-       <span class="truncate">Created today: {{todosData.createdToday}} </span>
-       <span class="truncate">Created this week: {{todosData.createdThisWeek}} </span>
-       <span class="truncate">Created this month: {{todosData.createdThisMonth}} </span>
-       <span class="truncate">Last todo created: {{todosData.lastTodoTime}} </span>
+      <div v-else>
+        <div class="flex justify-center mt-10">
+          <span class="text-xs truncate text-center">No Todo found </span>
+       </div>
       </div>
-    </div>
-    <div v-else>
-      <div class="flex justify-center mt-10">
-     <span class="text-xs truncate text-center">No Todo found </span>
-     </div>
-    </div>
   </div>
 
-  <div class="rounded-xl bg-gray-300 h-[50%] w-[25%] overflow-y-auto">
-    <h3 class="text-center truncate mt-2">Project Progress</h3>
+<div class="rounded-xl mb-5 bg-gray-300 min-h-[20vh] sm:h-[50%] w-[73%] sm:w-[25%] overflow-y-auto pb-3">
+    <h3 class="text-center text-sm sm:text-sm truncate mt-2">Project Progress</h3>
     <div v-if="todo.length > 0 || notes.length > 0">
       <!-- project stars -->
       <div class="flex items-center justify-center space-x-1 cursor-pointer">
@@ -279,15 +279,15 @@ onMounted(() => {
     </svg>
     </div>
     <!-- end project stars -->
-    <div class="flex flex-col ms-4 text-sm">
+    <div class="flex flex-col ms-4 text-xs sm:text-sm">
       <span class="truncate underline">Project Notes:</span>
-      <span class="truncate">Total notes: {{notesData.totalNotes}}</span>
-       <span class="truncate">Created today: {{notesData.createdToday}}</span>
-       <span class="truncate">Created this week: {{notesData.createdThisWeek}} </span>
-       <span class="truncate">Created this month: {{notesData.createdThisMonth}} </span>
-       <span class="truncate mb-2">Last note created: {{notesData.lastNoteTime}} </span>
+      <span class="truncate ">Total notes: {{notesData.totalNotes}}</span>
+       <span class="truncate ">Created today: {{notesData.createdToday}}</span>
+       <span class="truncate ">Created this week: {{notesData.createdThisWeek}} </span>
+       <span class="truncate ">Created this month: {{notesData.createdThisMonth}} </span>
+       <span class="truncate mb-2 ">Last note created: {{notesData.lastNoteTime}} </span>
     </div>
-    <div class="flex flex-col ms-4 text-sm">
+    <div class="flex flex-col ms-4 text-xs sm:text-sm">
       <span class="truncate underline">Project Todos:</span>
       <span class="truncate">Total Todos: {{todosData.totaltodos}}</span>
        <span class="truncate">Pending Todos: {{todosData.pendingTodos}} </span>

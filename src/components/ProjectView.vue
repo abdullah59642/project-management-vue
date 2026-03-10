@@ -68,17 +68,22 @@ onMounted(() => {
     md:gap-x-6 md:w-[30vw]
     lg:gap-x-10">
         <button class="" @click="toggleComponents('notes')" :class="currentActiveComponent == 'notes' ? activeTab.active : activeTab.notActive">Notes</button>
-        <button class="" @click="toggleComponents('todo')" :class="currentActiveComponent == 'todo' ? activeTab.active : activeTab.notActive">Todo List</button>
+        <button class="whitespace-nowrap" @click="toggleComponents('todo')" :class="currentActiveComponent == 'todo' ? activeTab.active : activeTab.notActive">Todo List</button>
         <button @click="toggleComponents('progress')" :class="currentActiveComponent == 'progress' ? activeTab.active : activeTab.notActive">Progress</button>
     </div>
 </div>
 
 <div v-show="showProjectDeleteModal" @click.self="showProjectDeleteModal = false" class="fixed inset-0 flex justify-center items-center bg-gray bg-opacity-30 backdrop-blur-sm z-50">
-    <div class="relative bg-blue-100 p-6 w-[25vw] shadow-lg rounded-xl text-center" @click.stop>
-        <h4 class="truncate">Are you sure to delete project "{{ projectName }}"</h4>
+    <div class="relative bg-blue-100 p-6 w-[80vw] shadow-lg rounded-xl text-center
+    sm:w-[55vw]
+    md:w-[49vw]
+    lg:w-[40vw]" @click.stop>
+        <h4 class="text-sm sm:text-sm">Are you sure to delete project "{{ projectName }}"</h4>
         <div class="flex justify-center space-x-2 mt-2">
-            <button @click="projectStore.deleteProject(projectId)" class="bg-red-500 rounded-sm px-1 hover:bg-red-800 cursor-pointer">Yes</button>
-            <button @click="showProjectDeleteModal = false" class="bg-gray-500 rounded-sm px-1 hover:bg-gray-600 cursor-pointer">No</button>
+            <button @click="projectStore.deleteProject(projectId)" class="bg-red-500 rounded-sm px-1 hover:bg-red-800 cursor-pointer text-xs w-[29px] h-[23px]
+            sm:text-sm sm:w-[29px] sm:h-[23px]">Yes</button>
+            <button @click="showProjectDeleteModal = false" class="bg-gray-500 rounded-sm px-1 hover:bg-gray-600 cursor-pointer text-xs w-[29px] h-[23px]
+            sm:text-sm sm:w-[29px] sm:h-[23px]">No</button>
         </div>
     </div>
 </div>
