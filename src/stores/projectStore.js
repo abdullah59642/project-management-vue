@@ -4,7 +4,9 @@ import { useRouter } from 'vue-router'
 
 export const useProjectStore = defineStore("projectStore", () => {
     let userProjects = ref([]);
+    let openSideBarOnPhone = ref(false);
     let selectedProjectKey = ref();
+    let isPhoneScreen = ref(false);
     const router = useRouter();
     const addProject = (...data) => {
         let i = 0;
@@ -52,5 +54,13 @@ export const useProjectStore = defineStore("projectStore", () => {
       }
     }
 
-    return {addProject, renderAllProjects, userProjects, deleteProject, selectedProjectKey};
+    let phoneScreenCheck = () => {
+      if(window.innerWidth < 768){
+        isPhoneScreen.value = true;
+      } else {
+        isPhoneScreen.value = false;
+      }
+    }
+
+    return {addProject, renderAllProjects, userProjects, deleteProject, selectedProjectKey, phoneScreenCheck, isPhoneScreen, openSideBarOnPhone};
 });

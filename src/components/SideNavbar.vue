@@ -28,44 +28,64 @@ let createProject = () => {
   }
 }
 
+// const headerDynamicClass = computed(() => {
+//   return projectStore.openSideBarOnPhone ? 'fixed z-100 w-[60vw] bg-blue-300 md:hidden' : 'hidden relative md:block w-[10vw] bg-blue-300';
+// })
+
+const headerDynamicClass = computed(() => {
+  return `
+    fixed left-0 h-full z-50 w-[70vw] bg-blue-300 
+    transform transition-transform duration-300 ease-in-out
+    ${projectStore.openSideBarOnPhone ? 'translate-x-0' : '-translate-x-full'}
+    md:translate-x-0 md:static md:w-[10vw]
+  `
+})
+
 onMounted(() => {
+  projectStore.phoneScreenCheck();
+  window.addEventListener('resize', projectStore.phoneScreenCheck);
   projectStore.renderAllProjects();
 });
 </script>
 
 <template>
-  <div class="relative w-[10vw] hidden md:block bg-blue-300" style="height: calc(100vh - 40px)">
+   <!-- hidden  -->
+   <div
+  v-if="projectStore.openSideBarOnPhone"
+  class="fixed inset-0 top-10 z-40 bg-black/20 backdrop-blur-sm md:hidden"
+  @click="projectStore.openSideBarOnPhone = false"
+></div>
 
+  <div :class="headerDynamicClass" style="height: calc(100vh - 40px)">
     <!-- project modal -->
     <Teleport to="body">
-    <div v-show="showProjectModal" class="flex justify-center items-center fixed inset-0 backdrop-blur-xs" @click="showProjectModal = false">
-      <div class="relative flex flex-col bg-gray-400 mt-8 h-[80%] w-[95%] p-12 rounded-xl
-      md:mt-8 md:h-[80%] md:w-[70%] md:p-12
-      lg:mt-8 lg:h-[80%] lg:w-[50%] lg:p-12" @click.stop>
-    <h1 class="text-center text-sm mt-8 mb-2
-      lg:text-center lg:text-l lg:mt-8 lg:mb-2
-    ">CREATE A PROJECT</h1>
-      <h1 class="text-xs md:text-s lg:text-sm">Project Name</h1>
-        <input
-          placeholder="Project Name..."
-          v-model="projectName"
-          type="text"
-          class="ps-2 border-1 rounded h-8 border-gray-300"
-        />
-        <h1 class="text-xs md:text-s lg:text-sm">Project Description</h1>
-        <textarea
-          placeholder="Project Description...."
-          v-model="projectDesc"
-          class="p-2 h-[40%] border-1 rounded border-gray-300"
-        />
-        <button @click="createProject()" class="bg-blue-500 w-20 mt-2 rounded cursor-pointer hover:bg-blue-900">
-          Create
-        </button>
+      <div v-show="showProjectModal" class="flex z-100 justify-center items-center fixed inset-0 backdrop-blur-xs" @click="showProjectModal = false">
+        <div class="relative flex flex-col bg-gray-400 mt-8 h-[80%] w-[95%] p-12 rounded-xl
+        md:mt-8 md:h-[80%] md:w-[70%] md:p-12
+        lg:mt-8 lg:h-[80%] lg:w-[50%] lg:p-12" @click.stop>
+      <h1 class="text-center text-sm mt-8 mb-2
+        lg:text-center lg:text-l lg:mt-8 lg:mb-2">CREATE A PROJECT</h1>
+        <h1 class="text-xs md:text-s lg:text-sm">Project Name</h1>
+          <input
+            placeholder="Project Name..."
+            v-model="projectName"
+            type="text"
+            class="ps-2 border-1 rounded h-8 border-gray-300"
+          />
+          <h1 class="text-xs md:text-s lg:text-sm">Project Description</h1>
+          <textarea
+            placeholder="Project Description...."
+            v-model="projectDesc"
+            class="p-2 h-[40%] border-1 rounded border-gray-300"
+          />
+          <button @click="createProject()" class="bg-blue-500 w-20 mt-2 rounded cursor-pointer hover:bg-blue-900">
+            Create
+          </button>
+        </div>
       </div>
-    </div>
   </Teleport>
     <!-- add project button -->
-    <div class="flex justify-end mr-2 mt-2">
+    <div class="flex justify-end mr-2 mt-2 ">
       <div class="flex hover:bg-blue-800 justify-center rounded bg-blue-500 w-7">
         <button @click="showProjectModal = true" class="cursor-pointer text-xl">+</button>
       </div>
