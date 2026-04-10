@@ -4,7 +4,9 @@ import {useProjectStore} from '@/stores/projectStore'
 import { toast } from 'vue3-toastify'
 import { useRoute } from 'vue-router'
 import { RouterLink } from 'vue-router'
+import {useAuthStore} from '@/stores/authState'
 
+let authStore = useAuthStore();
 const route = useRoute()
 let projectStore = useProjectStore();
 let showProjectModal = ref(false);
@@ -51,10 +53,10 @@ onMounted(() => {
 <template>
    <!-- hidden  -->
    <div
-  v-if="projectStore.openSideBarOnPhone"
-  class="fixed inset-0 top-10 z-40 bg-black/20 backdrop-blur-sm md:hidden"
-  @click="projectStore.openSideBarOnPhone = false"
-></div>
+    v-if="projectStore.openSideBarOnPhone"
+    class="fixed inset-0 top-10 z-40 bg-black/20 backdrop-blur-sm md:hidden"
+    @click="projectStore.openSideBarOnPhone = false"
+  ></div>
 
   <div :class="headerDynamicClass" style="height: calc(100vh - 40px)">
     <!-- project modal -->
@@ -87,26 +89,31 @@ onMounted(() => {
     <!-- add project button -->
     <div class="flex justify-end mr-2 mt-2 ">
       <div class="flex hover:bg-blue-800 justify-center rounded bg-blue-500 w-7">
-        <button @click="showProjectModal = true" class="cursor-pointer text-xl">+</button>
+        <button v-show="authStore.isUserLoggedIn" @click="showProjectModal = true" class="cursor-pointer text-xl">+</button>
       </div>
     </div>
     <h3 class="p-3 font-bold truncate">My Projects</h3>
     <!-- project list -->
-    <div v-if="projectStore.userProjects.length > 0">
-      <div v-for="(value, index) in projectStore.userProjects" class="flex flex-col mt-0 gap-1 cursor-pointer">
-        <RouterLink :to="`/project/${value.projectKey}`" @click="projectStore.selectedProjectKey = value.projectKey" 
-        :class="[
-          baseProjectClass,
-          // value.projectKey == projectStore.selectedProjectKey ? selectedProjectClass : notSelectedProjectClass,
-          String(value.projectKey) === String(route.params.id)
-          ? selectedProjectClass
-          : notSelectedProjectClass,
-        ]">
-        {{ value.name }}</RouterLink>
+     <div v-if="authStore.isUserLoggedIn">
+      <div v-if="projectStore.userProjects.length > 0">
+        <div v-for="(value, index) in projectStore.userProjects" class="flex flex-col mt-0 gap-1 cursor-pointer">
+          <RouterLink :to="`/project/${value.projectKey}`" @click="projectStore.selectedProjectKey = value.projectKey" 
+          :class="[
+            baseProjectClass,
+            // value.projectKey == projectStore.selectedProjectKey ? selectedProjectClass : notSelectedProjectClass,
+            String(value.projectKey) === String(route.params.id)
+            ? selectedProjectClass
+            : notSelectedProjectClass,
+          ]">
+          {{ value.name }}</RouterLink>
+        </div>
+      </div>
+      <div v-else>
+        <h2 class="text-xs text-center truncate">No projects found</h2>
       </div>
     </div>
     <div v-else>
-      <h2 class="text-xs text-center">No projects found</h2>
+      <h2 class="text-xs text-center truncate">Login to continue</h2>
     </div>
   </div>
 </template>

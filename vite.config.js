@@ -11,6 +11,7 @@ export default defineConfig({
     vue(),
     tailwindcss(),
   ],
+  base: '/project-management-vue',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

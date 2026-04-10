@@ -1,6 +1,9 @@
 <script setup>
   import {ref, reactive, computed, onMounted, nextTick} from 'vue';
   import { RouterLink } from 'vue-router'
+  import {useAuthStore} from '@/stores/authState'
+
+  let authStore = useAuthStore();
   let isContentScrollAble = ref(false);
   let allProjects = ref([]);
   //all project data 
@@ -213,7 +216,7 @@ const loadTodoData = (p) => {
       <div class="ms-3 mt-2 text-xs sm:text-sm ">This project allows you to create projects as much as you want create notes and todos and keep the track of the progress of the created projects.</div>
 
 <!-- analytics div -->
-<div class="flex justify-center mt-4">
+<div v-show="authStore.isUserLoggedIn" class="flex justify-center mt-4">
     <div class="rounded-xl bg-red-100 w-[50vw] md:w-[22vw] p-2">
       <!-- title -->
       <h1 class="mb-1 text-xs sm:text-sm">Overall Summary:</h1>
@@ -228,11 +231,13 @@ const loadTodoData = (p) => {
 </div>
 
 <!-- end analytics div -->
-      <div class="font-bold mt-2 text-sm sm:text-s">Your Projects</div>
+      <div v-show="authStore.isUserLoggedIn" class="font-bold mt-2 text-sm sm:text-s">Your Projects</div>
       <!-- projects overview div with carousel -->
        <div class="relative p-4 h-[70vh]  w-[96vw]
        md:w-[87vw]">
-        <h2 v-if="allProjects.length == 0" class="text-center mt-4">No Projects Found</h2>
+        <div v-show="authStore.isUserLoggedIn">
+          <h2 v-if="allProjects.length == 0" class="text-center mt-4">No Projects Found</h2>
+        </div>
         <!-- Left Arrow -->
         <button 
         v-if="isContentScrollAble"
@@ -243,6 +248,7 @@ const loadTodoData = (p) => {
         <!-- Scrollable Container -->
         <div
           ref="scrollContainer"
+          v-show="authStore.isUserLoggedIn"
           class="flex flex-col space-y-3  w-[100%] scroll-smooth overflow-y-auto lg:overflow-y-hidden
           h-full lg:flex-row lg:space-x-2 "> 
          <div v-for="project in allProjects" :key="project.projectKey" class="rounded-xl h-full bg-blue-400 cursor-pointer ">
