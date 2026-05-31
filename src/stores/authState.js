@@ -17,7 +17,7 @@ export const useAuthStore = defineStore("authStore", () => {
 
     const router = useRouter();
     const userLogin = (email, password) => {
-        if(email === 'test' && password === 'test'){
+        if(email === 'test@gmail.com' && password === 'test'){
             isUserLoggedIn.value = true;
             localStorage.setItem('isLoggedIn', true);
             if(!localStorage.getItem('userName')){
